@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "heroku-build": "ng build --prod"
   },
   "private": true,
   "dependencies": {
@@ -20,8 +21,11 @@
     "@angular/router": "~13.3.0",
     "@auth0/angular-jwt": "^5.0.2",
     "angular-notifier": "^11.0.0",
+    "experss": "^0.0.1-security",
+    "path": "^0.12.7",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
+    "typescript": "~4.6.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -37,5 +41,9 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "typescript": "~4.6.2"
+  },
+  "engines": {
+    "node": "16.17.0",
+    "npm": "8.15.0"
   }
 }

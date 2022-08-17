@@ -9,50 +9,49 @@ import {JwtHelperService} from "@auth0/angular-jwt";
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private token!: string|null;
-  private loggedInUsername!: null|string ;
-  private jwtHelper= new JwtHelperService();
-  public host = environment.apiUrl
+  private token: any;
+  private jwtHelper = new JwtHelperService();
+  constructor(private http: HttpClient) { }
 
-  constructor(private http:HttpClient) { }
-  public login(user:User):Observable<HttpResponse<User>|HttpErrorResponse>{
-      return this.http.post<User>(`${environment}/users/login`,user,{observe:'response'});
+  public login(user: User): Observable<HttpResponse<User>> {
+    return this.http.post<User>(`${environment.apiUrl}/users/login`, user, { observe: 'response' });
   }
-  public register(user:User):Observable<User | HttpErrorResponse >{
-    return this.http.post<User | HttpErrorResponse>(`${environment}/users/register`,user,);
+
+  public register(user: User): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/users/register`, user);
   }
-  public logout():void{
-    this.token=null;
-    this.loggedInUsername=null;
+
+  public logout(): void {
+    this.token = null;
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('users');
   }
 
-  public saveToken(token: string | null):void{
-    this.token=token;
-    if (typeof token === "string") {
-      localStorage.setItem('token', token);
-    }
+  public saveToken(token: string): void {
+    this.token = token;
+    localStorage.setItem('token', token);
   }
 
-  public addUserToLocalCache(user:User):void{
-    localStorage.setItem('user',JSON.stringify(user));
+
+  public addUserToLocalCache(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
   }
-  public getUserFromLocalCache():User{
-    // @ts-ignore
-    return JSON.parse(localStorage.getItem('user'));
+
+  getUserFromLocalCache(): User {
+    return JSON.parse(localStorage.getItem('user')!);
   }
-  public loadToken():void{
-    // @ts-ignore
-    this.token = JSON.parse(localStorage.getItem('token'));
+
+  public loadToken(): void {
+    this.token = localStorage.getItem('token');
   }
-  public getToken():string{
-    // @ts-ignore
+
+  public getToken(): string {
     return this.token;
   }
 
-  public isUserLoggedIn(): boolean {
+
+  isUserLoggedIn(): boolean {
     this.loadToken();
     if (this.token != null && this.token !== '') {
       if (this.jwtHelper.decodeToken(this.token).sub != null && this.jwtHelper.decodeToken(this.token).sub != '') {

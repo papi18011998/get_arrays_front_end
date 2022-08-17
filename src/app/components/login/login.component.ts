@@ -7,6 +7,7 @@ import {User} from "../../model/user";
 import {Subscription} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {NotificationType} from "../../enum/notification-type";
+import {HearderType} from "../../enum/hearder-type";
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,6 @@ import {NotificationType} from "../../enum/notification-type";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  private showLoading: boolean = false;
   private subscription:Subscription[]=[]
   constructor(private router:Router, private authenticationService:AuthenticationService,
               private notifier:NotificationService) { }
@@ -26,25 +26,22 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login'])
     }
   }
-  public onLogin(user:User):void{
-    this.showLoading =true
+  public onLogin(user: User): void {
     this.subscription.push(
-      this.authenticationService.login(user).subscribe({
-        next:(response)=>{
-          const token = response.headers.get('Jwt-Token')
-          this.authenticationService.saveToken(token)
-          this.authenticationService.addUserToLocalCache(user)
-          this.router.navigate(['/user/management'])
-          this.showLoading = false
+      this.authenticationService.login(user).subscribe(
+        (response) => {
+          const token = response.headers.get(HearderType.JWT_TOKEN);
+          this.authenticationService.saveToken(token!);
+          this.authenticationService.addUserToLocalCache(response.body!);
+          this.router.navigateByUrl('/user/management');
         },
-      error:(error)=>{
-        console.log(error)
-        this.sendErrorNotification(NotificationType.ERROR,error.error.message())
-      }
-      })
-    )
-    console.log(user)
+        (errorResponse: HttpErrorResponse) => {
+          this.sendErrorNotification(NotificationType.ERROR, errorResponse.error.message);
+        }
+      )
+    );
   }
+
   ngOnDestroy(): void {
     this.subscription.forEach(subscription=>{
       subscription.unsubscribe()

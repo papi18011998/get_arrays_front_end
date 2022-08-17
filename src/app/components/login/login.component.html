@@ -6,20 +6,22 @@
       <div class="card-group mb-0">
         <div class="card p-4">
           <div class="card-body">
-              <form>
+              <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm.value)">
                 <h1>Login</h1>
                 <p class="text-muted">Connexion a votre compte</p>
                 <div class="input-group mb-3">
                   <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                  <input type="text" class="form-control" placeholder="Username">
+                  <input type="text" class="form-control" placeholder="Username" name="userName" ngModel #usernameInput="ngModel" required>
                 </div>
+                <div class="help-blocks text-danger" *ngIf="usernameInput.invalid && usernameInput.touched"> Please enter the username</div>
                 <div class="input-group mb-4">
                   <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                  <input type="password" class="form-control" placeholder="Password">
+                  <input type="password" class="form-control" placeholder="Password" name="password" ngModel #passwordInput="ngModel" required>
                 </div>
+                <div class="help-blocks text-danger" *ngIf="passwordInput.invalid && passwordInput.touched"> Please enter your password</div>
                 <div class="row">
                   <div class="col-6">
-                    <button type="button" class="btn btn-primary px-4">Login</button>
+                    <button type="submit" class="btn btn-primary px-4" [disabled]="loginForm.invalid">Login</button>
                   </div>
                   <div class="col-6 text-right">
                     <button type="button" class="btn btn-link px-0">Forgot password?</button>
